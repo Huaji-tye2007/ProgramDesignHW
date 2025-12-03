@@ -11,7 +11,7 @@ using namespace std;
 
 GameState gamestate = {0, 0, 0, 0, 20, 10, 5, 120};
 
-// Helper function to display feedback and pause
+// 暂停以显示反馈信息
 void PauseForFeedback(const string &message)
 {
     cout << "\n"
@@ -24,7 +24,7 @@ Screen Interface()
     system("cls");
     gamestate.pieprice = (gamestate.level >= 2 ? 30 : 20);
     cout << "============================" << endl;
-    cout << "*********沙威玛传奇**********" << endl;
+    cout << "*********沙威玛传奇*********" << endl;
     cout << "*****作者：Huaji_tye2007****" << endl;
     cout << "============================" << endl;
     cout << "金币数量：" << gamestate.gold << endl;
