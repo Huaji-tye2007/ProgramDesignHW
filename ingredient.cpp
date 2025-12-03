@@ -2,6 +2,7 @@
 #include "playgame.h"
 #include "customer.h"
 #include <iostream>
+#include <string> 
 using namespace std;
 
 Ingredient ingredients = {10, 10, 10, 10, 10, 10, 10, 10};
@@ -11,6 +12,44 @@ CState chipsState = {false, false};
 CState colaState = {false, false};
 MStockState meatstock = {false};
 CStockState chipsstock = {false, false};
+
+string iStock(int *s, int max, const char *name)
+{
+    if (*s < max)
+    {
+        (*s)++;
+        return string(name) + "补充成功！当前数量: " + to_string(*s);
+    }
+    else
+    {
+        return string(name) + "已满！";
+    }
+}
+
+string AddDose(int dose, int *iStock, const char *iName)
+{
+    if (!pieState.hasPie)
+    {
+        return "请先放置卷饼！";
+    }
+    int index = 0;
+    for (index = 0; index < 5; index++)
+    {
+        if (pieState.dosing[index] == 0)
+            break;
+    }
+    if (index == 5)
+    {
+        return "配料已满！";
+    }
+    if (*iStock <= 0)
+    {
+        return string(iName) + "库存不足！";
+    }
+    pieState.dosing[index] = dose;
+    (*iStock)--;
+    return string(iName) + "已添加。";
+}
 
 void StockInterface()
 {
@@ -64,23 +103,9 @@ void ProductInterface()
          << (colaState.filled ? "已装满 " : "未装满 ") << endl;
 }
 
-// 补货
-int iStock(int *s, int max, const char *name)
-{
-    if (*s < max)
-    {
-        (*s)++;
-        cout << name << ": " << *s << endl;
-        return 0;
-    }
-    else
-    {
-        cout << name << "已满！" << endl;
-        return -1;
-    }
-}
+// --- Action Functions (Now return string) ---
 
-int iStocking(char choice)
+string iStocking(char choice)
 {
     switch (choice)
     {
@@ -101,30 +126,26 @@ int iStocking(char choice)
     case '8':
         return iStock(&wrappers.Bottle, wrappers.MAX, "杯子");
     default:
-        cout << "非法输入！" << endl;
-        return -1;
+        return "非法输入！";
     }
 }
 
-int MakeMeat(char choice)
+string MakeMeat(char choice)
 {
     if (ingredients.Meat >= ingredients.MAX)
     {
-        cout << "肉库存已满！" << endl;
-        return -1;
+        return "肉库存已满！";
     }
     if (gamestate.level >= 1)
     {
         if (choice == 'H')
         {
             ingredients.Meat = ingredients.MAX;
-            cout << "肉：" << ingredients.Meat << endl;
-            return 0;
+            return "肉已自动补满！";
         }
         else
         {
-            cout << "自动切肉机已解锁，请直接补肉！" << endl;
-            return -1;
+            return "自动切肉机已解锁，请直接补肉！";
         }
     }
     switch (choice)
@@ -132,124 +153,79 @@ int MakeMeat(char choice)
     case 'G':
         if (meatstock.cut)
         {
-            cout << "肉已经切好了！" << endl;
-            return -1;
+            return "肉已经切好了！";
         }
         meatstock.cut = true;
-        cout << "肉切好啦！" << endl;
-        return 0;
+        return "肉切好啦！";
     case 'H':
         if (!meatstock.cut)
         {
-            cout << "请先切肉！" << endl;
-            return -1;
+            return "请先切肉！";
         }
         ingredients.Meat++;
         meatstock.cut = false;
-        cout << "肉：" << ingredients.Meat << endl;
-        return 0;
+        return "肉补充成功！当前数量: " + to_string(ingredients.Meat);
     default:
-        cout << "非法输入！" << endl;
-        return -1;
+        return "非法输入！";
     }
 }
 
-int MakeChips(char choice)
+string MakeChips(char choice)
 {
     if (ingredients.Chips >= ingredients.MAX)
     {
-        cout << "薯条库存已满！" << endl;
-        return -1;
+        return "薯条库存已满！";
     }
     switch (choice)
     {
     case 'I':
         if (chipsstock.cut)
         {
-            cout << "土豆已经切好了！" << endl;
-            return -1;
+            return "土豆已经切好了！";
         }
         chipsstock.cut = true;
-        cout << "土豆切好啦！" << endl;
-        return 0;
+        return "土豆切好啦！";
     case 'J':
         if (!chipsstock.cut)
         {
-            cout << "请先切土豆！" << endl;
-            return -1;
+            return "请先切土豆！";
         }
         chipsstock.fried = true;
-        cout << "薯条炸好啦！" << endl;
-        return 0;
+        return "薯条炸好啦！";
     case 'K':
         if (!chipsstock.cut)
         {
-            cout << "请先切土豆！" << endl;
-            return -1;
+            return "请先切土豆！";
         }
         if (!chipsstock.fried)
         {
-            cout << "请先炸薯条！" << endl;
-            return -1;
+            return "请先炸薯条！";
         }
         ingredients.Chips++;
         chipsstock.cut = false;
         chipsstock.fried = false;
-        cout << "薯条：" << ingredients.Chips << endl;
-        return 0;
+        return "薯条补充成功！当前数量: " + to_string(ingredients.Chips);
     default:
-        cout << "非法输入！" << endl;
-        return -1;
+        return "非法输入！";
     }
 }
 
-// 制作卷饼
-int AddDose(int dose, int *iStock, const char *iName)
-{
-    if (!pieState.hasPie)
-    {
-        cout << "请先放置卷饼！" << endl;
-        return -1;
-    }
-    int index = 0;
-    for (index; index < 5; index++)
-    {
-        if (pieState.dosing[index] == 0)
-            break;
-    }
-    if (index == 5)
-    {
-        cout << "配料已满！" << endl;
-        return -1;
-    }
-    if (*iStock <= 0)
-    {
-        cout << iName << "库存不足！" << endl;
-        return -1;
-    }
-    pieState.dosing[index] = dose;
-    (*iStock)--;
-    return 0;
-}
-
-int MakePie(char choice)
+string MakePie(char choice)
 {
     switch (choice)
     {
     case '1':
         if (pieState.hasPie)
         {
-            cout << "已有卷饼！" << endl;
-            return -1;
+            return "已有卷饼！";
         }
         if (ingredients.Pie == 0)
         {
-            cout << "卷饼库存不足！" << endl;
-            return -1;
+            return "卷饼库存不足！";
         }
         pieState.hasPie = true;
         ingredients.Pie--;
-        return 0;
+        return "已放置卷饼。";
     case '2':
         return AddDose(1, &ingredients.Meat, "肉");
     case '3':
@@ -263,107 +239,100 @@ int MakePie(char choice)
     case '7':
         if (!pieState.hasPie)
         {
-            cout << "请先放置卷饼！" << endl;
-            return -1;
+            return "请先放置卷饼！";
         }
         if (pieState.folded)
         {
-            cout << "卷饼已卷好！" << endl;
-            return -1;
+            return "卷饼已卷好！";
         }
         pieState.folded = true;
-        return 0;
+        return "卷饼已卷好。";
     case '8':
         if (!pieState.hasPie)
         {
-            cout << "请先放置卷饼！" << endl;
-            return -1;
+            return "请先放置卷饼！";
         }
         if (!pieState.folded)
         {
-            cout << "请先卷起卷饼！" << endl;
-            return -1;
+            return "请先卷起卷饼！";
         }
         if (pieState.wrapped)
         {
-            cout << "卷饼已包装！" << endl;
-            return -1;
+            return "卷饼已包装！";
         }
         if (wrappers.Paper <= 0)
         {
-            cout << "包装纸库存不足！" << endl;
-            return -1;
+            return "包装纸库存不足！";
         }
         pieState.wrapped = true;
         wrappers.Paper--;
-        return 0;
+        return "卷饼已包装。";
     default:
-        cout << "非法输入！" << endl;
-        return -1;
+        return "非法输入！";
     }
 }
 
-// 制作小吃
-int ChipsNCola(char choice)
+string ChipsNCola(char choice)
 {
     CState *obj = NULL;
     int *stock = NULL;
     const char *item_name = "";
     const char *wrapper_name = "";
+    int *wrapper_stock = NULL;
 
-    if (choice >= 'A' && choice <= 'C')
+    if (choice >= 'A' && choice <= 'B')
     {
         obj = &chipsState;
         stock = &ingredients.Chips;
         item_name = "薯条";
         wrapper_name = "盒子";
+        wrapper_stock = &wrappers.Box;
     }
-    else if (choice >= 'D' && choice <= 'F')
+    else if (choice >= 'D' && choice <= 'E')
     {
         obj = &colaState;
         stock = &ingredients.Cola;
         item_name = "可乐";
         wrapper_name = "杯子";
+        wrapper_stock = &wrappers.Bottle;
+    }
+    else
+    {
+        return "非法输入！";
     }
 
-    int act = (choice - ((choice >= 'A' && choice <= 'C') ? 'A' : 'D'));
+    int act = (choice - ((choice >= 'A' && choice <= 'B') ? 'A' : 'D'));
     switch (act)
     {
     case 0:
         if (obj->haswrapper)
         {
-            cout << "已有" << wrapper_name << "！" << endl;
-            return -1;
+            return "已有" + string(wrapper_name) + "！";
         }
-        if ((choice >= 'A' && choice <= 'C' ? wrappers.Box : wrappers.Bottle) == 0)
+        if (*wrapper_stock <= 0)
         {
-            cout << wrapper_name << "库存不足！" << endl;
-            return -1;
+            return string(wrapper_name) + "库存不足！";
         }
         obj->haswrapper = true;
-        (choice >= 'A' && choice <= 'C' ? wrappers.Box-- : wrappers.Bottle--);
-        return 0;
+        (*wrapper_stock)--;
+        return "已拿出" + string(wrapper_name) + "。";
     case 1:
         if (!obj->haswrapper)
         {
-            cout << "请先拿" << wrapper_name << "！" << endl;
-            return -1;
+            return "请先拿" + string(wrapper_name) + "！";
         }
         if (obj->filled)
         {
-            cout << item_name << "已装满！" << endl;
-            return -1;
+            return string(item_name) + "已装满！";
         }
         if (*stock <= 0)
         {
-            cout << item_name << "库存不足！" << endl;
-            return -1;
+            return string(item_name) + "库存不足！";
         }
         obj->filled = true;
         (*stock)--;
-        return 0;
+        return string(item_name) + "已装满。";
     default:
-        cout << "非法输入！" << endl;
-        return -1;
+        return "非法输入！";
     }
 }

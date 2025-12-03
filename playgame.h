@@ -23,7 +23,6 @@ struct GameState
 
 extern GameState gamestate;
 
-// 更新函数原型以返回新的屏幕状态
 Screen Interface();
 Screen Upgrade();
 Screen NewDay();

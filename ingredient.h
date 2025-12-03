@@ -1,3 +1,4 @@
+#include <iostream>
 #ifndef INGREDIENT_H
 #define INGREDIENT_H
 
@@ -57,12 +58,10 @@ void StockInterface();
 void WorkInterface();
 void StockingInterface();
 void ProductInterface();
-int iStock(int *s, int max, const char *name);
-int iStocking(char choice);
-int MakeMeat(char choice);
-int MakeChips(char choice);
-int AddDose(int dose, int *iStock, const char *iName);
-int MakePie(char choice);
-int ChipsNCola(char choice);
+std::string iStocking(char choice);
+std::string MakeMeat(char choice);
+std::string MakeChips(char choice);
+std::string MakePie(char choice);
+std::string ChipsNCola(char choice);
 
 #endif

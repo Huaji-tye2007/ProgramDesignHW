@@ -12,7 +12,7 @@ using namespace std;
 GameState gamestate = {0, 0, 0, 0, 20, 10, 5, 120};
 
 // Helper function to display feedback and pause
-void ShowFeedback(const string &message)
+void PauseForFeedback(const string &message)
 {
     cout << "\n"
          << message << endl;
@@ -51,7 +51,7 @@ Screen Interface()
         cout << "退出游戏，感谢您的游玩！" << endl;
         return Screen::EXIT;
     default:
-        ShowFeedback("无效输入，请输入1、2或3。");
+        PauseForFeedback("无效输入，请输入1、2或3。");
         return Screen::MAIN_MENU;
     }
 }
@@ -87,7 +87,7 @@ Screen Upgrade()
     {
         feedbackMessage = "无效输入，请输入Y或N。";
     }
-    ShowFeedback(feedbackMessage);
+    PauseForFeedback(feedbackMessage);
     return Screen::MAIN_MENU;
 }
 
@@ -104,53 +104,22 @@ Screen NewDay()
     {
         system("cls");
 
-        // --- 绘制当前界面 ---
         time_t currentTime = time(0);
         double dayElapsedTime = difftime(currentTime, dayStartTime);
-        cout << "=========当天剩余时间：" << static_cast<int>(gamestate.countdown - dayElapsedTime) << "s=========" << endl;
-        cout << "累计金币：" << gamestate.gold << endl;
-        cout << "卷饼价格：" << gamestate.pieprice << " 金币 | 薯条价格：" << gamestate.chipprice << " 金币 | 可乐价格：" << gamestate.colaprice << " 金币" << endl;
-        StockInterface();
-        ProductInterface();
-        WorkInterface();
-        CustInterface(currentCustomer);
-        cout << "---------------------" << endl;
 
-        // --- 显示上次操作的反馈并暂停 ---
-        ShowFeedback(feedbackMessage);
-        feedbackMessage = ""; // 清空反馈
-
-        // --- 再次清屏并绘制，准备接受新指令 ---
-        system("cls");
-        dayElapsedTime = difftime(time(0), dayStartTime); // 重新获取时间
-        cout << "=========当天剩余时间：" << static_cast<int>(gamestate.countdown - dayElapsedTime) << "s=========" << endl;
-        cout << "累计金币：" << gamestate.gold << endl;
-        cout << "卷饼价格：" << gamestate.pieprice << " 金币 | 薯条价格：" << gamestate.chipprice << " 金币 | 可乐价格：" << gamestate.colaprice << " 金币" << endl;
-        StockInterface();
-        ProductInterface();
-        WorkInterface();
-        CustInterface(currentCustomer);
-        cout << "---------------------" << endl;
-        cout << "请输入操作指令 ('Q' 结束当天): ";
-
-        // --- 逻辑更新 ---
-        currentTime = time(0); // 重新获取时间
-        dayElapsedTime = difftime(currentTime, dayStartTime);
         if (dayElapsedTime >= gamestate.countdown)
         {
             feedbackMessage = "\n时间到！一天结束了！";
-            break;
+            PauseForFeedback(feedbackMessage);
+            return Screen::MAIN_MENU;
         }
-        if (!currentCustomer.isActive)
+
+        if (!currentCustomer.isActive && currentTime >= nextCustomerTime)
         {
-            if (currentTime >= nextCustomerTime)
-            {
-                GenCust(currentCustomer);
-                feedbackMessage = "新顾客到店！";
-                continue; // 立即刷新界面显示新顾客
-            }
+            GenCust(currentCustomer);
+            feedbackMessage = "新顾客到店！";
         }
-        if (currentCustomer.isActive)
+        else if (currentCustomer.isActive)
         {
             double customerElapsedTime = difftime(currentTime, currentCustomer.spawnTime);
             if (customerElapsedTime >= currentCustomer.patience)
@@ -158,11 +127,21 @@ Screen NewDay()
                 feedbackMessage = "顾客等得不耐烦，已经离开了！";
                 currentCustomer.isActive = false;
                 nextCustomerTime = currentTime + (rand() % 10 + 2);
-                continue; // 立即刷新
             }
         }
 
-        // --- 等待并处理输入 ---
+        cout << "=========当天剩余时间：" << static_cast<int>(gamestate.countdown - dayElapsedTime) << "s=========" << endl;
+        cout << "累计金币：" << gamestate.gold << endl;
+        cout << "卷饼价格：" << gamestate.pieprice << " 金币 | 薯条价格：" << gamestate.chipprice << " 金币 | 可乐价格：" << gamestate.colaprice << " 金币" << endl;
+        StockInterface();
+        ProductInterface();
+        WorkInterface();
+        CustInterface(currentCustomer);
+        cout << "---------------------" << endl;
+        cout << "【反馈提示】" << feedbackMessage << endl; // 显示上一轮操作的反馈
+        cout << "---------------------" << endl;
+        cout << "请输入操作指令 ('Q' 结束当天): ";
+
         char choice;
         cin >> choice;
         choice = toupper(choice);
@@ -170,7 +149,8 @@ Screen NewDay()
         if (choice == 'Q')
         {
             feedbackMessage = "你提前结束了今天的工作。";
-            break;
+            PauseForFeedback(feedbackMessage);
+            return Screen::MAIN_MENU;
         }
         else if (choice == '9' || choice == 'C' || choice == 'F')
         {
@@ -204,48 +184,44 @@ Screen NewDay()
                     {
                         feedbackMessage = "顾客愤怒地离开了！";
                         currentCustomer.isActive = false;
-                        nextCustomerTime = currentTime + (rand() % 10 + 5);
+                        nextCustomerTime = time(0) + (rand() % 10 + 5);
                     }
                     else if (currentCustomer.PieServed && currentCustomer.ChipsServed && currentCustomer.ColaServed)
                     {
                         feedbackMessage = "顾客满意离开了！";
                         gamestate.servedCustomers++;
                         currentCustomer.isActive = false;
-                        nextCustomerTime = currentTime + (rand() % 16);
+                        nextCustomerTime = time(0) + (rand() % 16);
                     }
                 }
             }
         }
         else if (choice >= '1' && choice <= '8')
         {
-            MakePie(choice);
-            feedbackMessage = "制作卷饼中...";
+            feedbackMessage = MakePie(choice);
         }
         else if ((choice >= 'A' && choice <= 'B') || (choice >= 'D' && choice <= 'E'))
         {
-            ChipsNCola(choice);
-            feedbackMessage = "制作小吃中...";
+            feedbackMessage = ChipsNCola(choice);
         }
         else if (choice >= 'G' && choice <= 'H')
         {
-            MakeMeat(choice);
-            feedbackMessage = "处理肉类中...";
+            feedbackMessage = MakeMeat(choice);
         }
         else if (choice >= 'I' && choice <= 'K')
         {
-            MakeChips(choice);
-            feedbackMessage = "处理薯条中...";
+            feedbackMessage = MakeChips(choice);
         }
         else if (choice == 'L')
         {
             system("cls");
             StockingInterface();
             cout << "请输入补货指令（输入Q返回）：";
-            cin >> choice;
-            if (toupper(choice) != 'Q')
+            char stockChoice;
+            cin >> stockChoice;
+            if (toupper(stockChoice) != 'Q')
             {
-                iStocking(toupper(choice));
-                feedbackMessage = "补货操作完成。";
+                feedbackMessage = iStocking(toupper(stockChoice));
             }
             else
             {
@@ -257,7 +233,4 @@ Screen NewDay()
             feedbackMessage = "无效指令，请重新输入！";
         }
     }
-
-    ShowFeedback(feedbackMessage);
-    return Screen::MAIN_MENU;
 }

@@ -5,7 +5,7 @@
 #include "ingredient.h"
 using namespace std;
 
-int id = 0; // 顾客ID，用以区分
+int id = 0; 
 void GenCust(Customer &cust)
 {
     id += 1;
@@ -31,7 +31,7 @@ void GenCust(Customer &cust)
     cust.isActive = true;
     if (!cust.wantsPie && !cust.wantsChips && !cust.wantsCola)
     {
-        GenCust(cust); // 确保至少有一个需求
+        GenCust(cust);
         return;
     }
     cust.PieServed = !cust.wantsPie;
