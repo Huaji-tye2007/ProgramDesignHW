@@ -13,3 +13,6 @@ Welcome to play and have fun!
  - Keep an eye on customer patience levels to avoid losing sales.
  - Be careful with your making process to avoid wasting and annoying customers.
 5. Upgrade your stand to improve your service and attract more customers.
+
+Note: This is a simple console-based game. Enjoy the retro gaming experience!
+More features and improvements may be added in future versions. Stay tuned!
