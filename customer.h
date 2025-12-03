@@ -1,9 +1,11 @@
 #ifndef CUSTOMER_H
 #define CUSTOMER_H
-#include <ctime> 
+#include <ctime>
+#include <string>
 
 struct Customer
 {
+    int id;
     double patience; // 初始耐心值
     int pieOrder[5];
     bool wantsPie;
@@ -17,8 +19,8 @@ struct Customer
     time_t spawnTime; // 顾客生成的时间点
 };
 
-void GenCust(Customer &cust);
-void CustInterface(const Customer &cust);
-bool ServeCust(Customer &cust, char choice);
+void GenCust(Customer *customers, int maxCustomers);
+void CustInterface(const Customer *customers, int maxCustomers, int targetIndex);
+bool ServeCust(Customer &cust, char choice, std::string &feedback);
 
 #endif

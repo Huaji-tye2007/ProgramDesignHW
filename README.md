@@ -14,5 +14,11 @@ Welcome to play and have fun!
  - Be careful with your making process to avoid wasting and annoying customers.
 5. Upgrade your stand to improve your service and attract more customers.
 
+## V2 Update
+
+- Added a new upgrade option: "扩大店铺" (Expand Store) to increase customer capacity.
+- Added a new upgrade option: "扩大仓库" (Expand Warehouse) to increase ingredient capacity.
+- Improved user interface for better gameplay experience.
+
 Note: This is a simple console-based game. Enjoy the retro gaming experience!
 More features and improvements may be added in future versions. Stay tuned!
