@@ -341,15 +341,7 @@ Screen NewDay()
         }
         else if (choice >= 'G' && choice <= 'H')
         {
-            if (gamestate.level >= 1)
-            {
-                iStocking('R');
-                feedbackMessages.push_back("自动切肉机工作完成！");
-            }
-            else
-            {
-                feedbackMessages.push_back(MakeMeat(choice));
-            }
+            feedbackMessages.push_back(MakeMeat(choice));
         }
         else if (choice >= 'I' && choice <= 'K')
         {

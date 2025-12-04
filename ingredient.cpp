@@ -103,8 +103,6 @@ void ProductInterface()
          << (colaState.filled ? "已装满 " : "未装满 ") << endl;
 }
 
-// --- Action Functions (Now return string) ---
-
 string iStocking(char choice)
 {
     switch (choice)
