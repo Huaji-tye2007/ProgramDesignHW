@@ -192,7 +192,7 @@ Screen NewDay()
 
     while (true)
     {
-        // 1. 渲染UI
+        // 渲染UI
         system("cls");
         time_t currentTime = time(0);
         cout << "=========当天剩余时间：" << static_cast<int>(gamestate.countdown - difftime(currentTime, dayStartTime)) << "s=========" << endl;
@@ -216,10 +216,10 @@ Screen NewDay()
             }
         }
         cout << "---------------------" << endl;
-        cout << "切换顾客: [<]左 [>]右 | 制作: [1-8, A-K] | 服务: [9,C,F] | 补货: [L] | 结束当天: [Q]" << endl;
+        cout << "切换顾客: [<]左 [>]右 | 结束当天: [Q]" << endl;
         cout << "请输入操作指令: ";
 
-        // 2. 处理输入 (阻塞式)
+        // 处理输入 
         char choice;
         cin >> choice;
         choice = toupper(choice);
@@ -228,7 +228,7 @@ Screen NewDay()
         feedbackMessages.clear();
         currentTime = time(0);
 
-        // 3. 更新游戏状态 (顾客生成、离开)
+        // 更新游戏状态 (顾客生成、离开)
         if (difftime(currentTime, dayStartTime) >= gamestate.countdown)
         {
             PauseForFeedback("\n时间到！一天结束了！");
@@ -260,7 +260,7 @@ Screen NewDay()
             }
         }
 
-        // 4. 根据输入更新状态
+        // 根据输入更新状态
         if (choice == 'Q')
         {
             PauseForFeedback("你提前结束了今天的工作。");
