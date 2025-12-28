@@ -1,4 +1,4 @@
-# A Program Design Homework
+# A Fundmentals of Programing Project
 A Shawarma Game realized by HUAJI_TYE2007.
 Welcome to play and have fun!
 
