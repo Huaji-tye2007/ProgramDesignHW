@@ -1,4 +1,4 @@
-# A Fundmentals of Programing Project
+# A Fundmentals of Programming Project
 A Shawarma Game realized by HUAJI_TYE2007.
 Welcome to play and have fun!
 
